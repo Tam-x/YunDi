@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- device info here -->
+	<device num="1">
+		<id>2345</id>
+		<imei>imei1</imei>
+	</device>
+	<!-- device info here -->
+	<device num="2">
+		<id>123445</id>
+		<imei>imei2</imei>
+	</device>
+</root>
