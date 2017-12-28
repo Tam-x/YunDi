@@ -24,6 +24,12 @@ public class RunnableCloud implements Runnable{
     private volatile long lastACKTime = System.currentTimeMillis();
     private int retryCount = 0;
     
+    /**
+     * 
+     * @param imei
+     * @param address
+     * @param port
+     */
     public RunnableCloud(String imei, String address, int port) {
         this.imei = imei;
         this.address = address;
@@ -147,23 +153,21 @@ public class RunnableCloud implements Runnable{
     public boolean sendLater(byte[] data, boolean later) {
         boolean result = true;
         if(handle != null){
-	        try {    	
-	        	lastSendTime = System.currentTimeMillis();
+	        try {    		        	
 		        	if(handle != null && handle.isConnected()){
-		            OutputStream os = handle.getOutputStream();
-		            os.write(data);
-		            if (data.length > 0) {
-		                os.write("\\r\\n".getBytes());
-		            }
-		            if (!later) {
-		                os.flush();
-		            }
+			            OutputStream os = handle.getOutputStream();
+			            os.write(data);
+			            if (data.length > 0) {
+			                os.write("\\r\\n".getBytes());
+			            }
+			            os.flush();
+			            lastSendTime = System.currentTimeMillis();
 	        	}
 	        } catch (IOException e) {
-	        	Util.log(TAG, "send:" + e,LogLevel.SYS);
+	        	Util.log(TAG, "Server send data ioexception:" + e.toString(),LogLevel.SYS);
 	            result = false;
 	        } catch (Exception e) {
-	        	Util.log(TAG, "send:" + e, LogLevel.SYS);
+	        	Util.log(TAG, "Server send data exception:" + e.toString(), LogLevel.SYS);
 	            result = false;
 	        }
         }else{
@@ -182,22 +186,21 @@ public class RunnableCloud implements Runnable{
         }
         if (interval > Global.MAX_ACK_INTERVAL_TIME) {
             send("");
-            Util.log(TAG,"Send test with interval:" + interval, LogLevel.SYS);
+            Util.log(TAG,"Server send heart test with interval:" + interval, LogLevel.SYS);
         }
         if(acktime > Global.MAX_RESET_TIME){
-        	Util.log(TAG,"Cloud ack is dead:" + acktime, LogLevel.SYS);   
+        	Util.log(TAG,"Server has not receive 'ack' info from cloud, and server'll restart.(ack time:)"+acktime, LogLevel.SYS);   
         	lastACKTime = System.currentTimeMillis();
         	reconnect();       	
         }
     }
 
     public boolean sendLater(String data) {
-    	Util.log(TAG,"sending:" + data, LogLevel.SYS);
+    	Util.log(TAG,"Server is sending:" + data, LogLevel.SYS);
         return sendLater(data.getBytes(), true);
     }
 
     public boolean send(String data) {
-    	Util.log(TAG,"send:" + data, LogLevel.SYS);
         return send(data.getBytes());
     }
 
@@ -222,29 +225,26 @@ public class RunnableCloud implements Runnable{
 	                    hasOK = (message.indexOf("OK") < 0)? false : true;
 	                    hasACK = (message.indexOf("ACK") < 0)? false : true;
 	                    hasUTC = (message.indexOf("UTC") < 0)? false : true;
-	                    Util.log(TAG,"message from cloud:"+message, LogLevel.SYS);
+	                    
+	                    lastACKTime = System.currentTimeMillis();
 	                    if(hasUTC){
-	                    	if(Global.timeDiff != 0){
+	                    	if(Global.timeDiff == 0){
 	                    		Global.timeDiff = Long.parseLong(message.substring
 		                      			(message.indexOf("UTC:") + 4,message.indexOf(";"))) - lastSendTime;
 		                      	Util.log(TAG, "time difference:"+Global.timeDiff, LogLevel.SYS);
 	                    	}
 	                    } 
-	                    if(hasOK && !hasACK) {                   	  
-	                    	Util.log(TAG, message, LogLevel.SYS);
+	                    if(hasOK && !hasACK) {                   	
 	                        buf = null;
+	                        Util.log(TAG,"Message from cloud:"+message, LogLevel.SYS);
 	                        return;
 	                    }                  
 	                    send("{\"zresponse\":\"ALIVE\"}\r\n");
-	                    if (hasACK) {
-	                    	lastACKTime = System.currentTimeMillis();
-	                    	Util.log(TAG, message, LogLevel.SYS);
+	                    if (hasACK) {	
+	                    	Util.log(TAG,"Message from cloud:"+message, LogLevel.SYS);
 	                        buf = null;
 	                        return;
-	                    }                         
-	                    
-	                } else {
-	                    throw new IOException("connection inputstream closed");
+	                    } 
 	                }
 	            }
         	}
@@ -263,6 +263,12 @@ public class RunnableCloud implements Runnable{
                 if(!sendLater(message)) {
                     vqueue.push(message);
                     Util.log(TAG, "Server send message to cloud failed.", LogLevel.SYS);
+                    try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
                 }else{
                 	lastACKTime = System.currentTimeMillis();
                 }

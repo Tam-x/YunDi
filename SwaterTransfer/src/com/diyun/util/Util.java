@@ -1,5 +1,8 @@
 package com.diyun.util;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import com.diyun.enums.LogLevel;
 
 /**
@@ -12,6 +15,7 @@ import com.diyun.enums.LogLevel;
 public class Util {
 	
 	private static int logLevel = 1;
+	private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	/**
 	 * Set log level
@@ -29,7 +33,8 @@ public class Util {
 	 */
 	public static void log(String tag, String info, LogLevel level){
 		if(logLevel == 0)return;
-		if(logLevel >= level.getLevel())System.out.println("["+tag+"]"+info);
+		Date date = new Date(System.currentTimeMillis());
+		if(logLevel >= level.getLevel())System.out.println("["+formatter.format(date)+"] " +"["+tag+"]"+info);
 	}
 	
 }
