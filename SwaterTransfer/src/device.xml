@@ -3,11 +3,7 @@
 	<!-- device info here -->
 	<device num="1">
 		<id>16797952</id>
-		<imei>860336030083959</imei>
+		<imei>860336030083958</imei>
 	</device>
 	<!-- device info here -->
-	<device num="2">
-		<id>123445</id>
-		<imei>imei2</imei>
-	</device>
 </root>

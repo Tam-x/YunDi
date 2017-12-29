@@ -30,20 +30,42 @@ public class SmartWater  implements HouseIDListener{
 	private static Consumer consumer;
 	private static List<DataDevice> devices;
 	private static DataProperty property;
+	private static boolean isRelease = false;
 	
 	public static void main(String[] args) {
-		init();
+		if(isRelease){
+			if(args.length < 1){
+				try {
+					throw new Exception("You need to specify the path of device.xml (eg:java -jar xx.jar path/device.xml).");
+				} catch (Exception e) {
+					e.printStackTrace();
+					return;
+				}
+			}
+			init(args[0]);
+		}else{
+			init("src/device");
+		}
+		
 		start();
 	}
 	
 	/**
 	 * Load device info, load property info.
 	 */
-	private static void init(){
-		devices = SwaterDevice.loadDeviceInfo();
+	private static void init(String path){
+		devices = SwaterDevice.loadDeviceInfo(path);
 		property = SwaterProperty.loadProperties();
 		for(DataDevice device: devices){
 			Global.IMEIS.put(device.getDtuID(), device.getIMEI());
+		}
+		if(Global.IMEIS.size() == 0){
+			Util.log(TAG, "Can not load file of device.xml.", LogLevel.SYS);
+			return;
+		}
+		if((property == null)){
+			Util.log(TAG, "There is nothing in swater.properts file", LogLevel.SYS);
+			return;
 		}
 		consumer = new Consumer(property.getMqttBroker());	
 		
@@ -56,12 +78,7 @@ public class SmartWater  implements HouseIDListener{
 	}	
 	
 	private synchronized void connectLoop(int key){
-		if((property == null)){
-			Util.log(TAG, "There is nothing in swater.properts file", LogLevel.SYS);
-			return;
-		}
-		String imei = Global.IMEIS.get(key);
-		
+		String imei = Global.IMEIS.get(key);	
 		if(null == imei){
 			Util.log(TAG, "Device's imei is not exist.", LogLevel.SYS);
 			return;

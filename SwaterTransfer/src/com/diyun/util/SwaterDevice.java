@@ -28,8 +28,8 @@ public class SwaterDevice {
 
 	private static final String TAG = "SwaterDevice";
 
-	public static List<DataDevice> loadDeviceInfo() {
-		String fileName = "src/device.xml";
+	public static List<DataDevice> loadDeviceInfo(String path) {
+		String fileName = path;
 		List<DataDevice> list = new ArrayList<>();
 		try {	
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -67,8 +67,5 @@ public class SwaterDevice {
 			e.printStackTrace();
 		}
 		return list;
-	}
-	public static void main(String[] args) {
-		loadDeviceInfo();
 	}
 }

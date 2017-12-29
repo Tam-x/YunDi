@@ -100,7 +100,7 @@ public class Consumer {
 								set.add(dtuip);		
 								if(key < set.size()){					
 									if(mListener != null){	
-										Util.log(TAG, "A new dtu is coming, dtuip:"+dtuip+",dtu total nums:"+set.size(), LogLevel.SYS);
+										Util.log(TAG, "#### A new dtu is coming ####, dtuip:"+dtuip+",dtu total nums:"+set.size(), LogLevel.SYS);
 										mListener.startLoop(dtuip);
 										key++;
 									}

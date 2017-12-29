@@ -1,5 +1,10 @@
 package com.diyun.util;
 
+/**
+ * 
+ * A message queue to store JSON data.
+ *
+ */
 public class MessageQueue {
 	
     protected static final int QSIZE = Global.MESSAGE_QUEUE_SIZE;

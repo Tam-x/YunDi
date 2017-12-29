@@ -250,7 +250,7 @@ public class RunnableCloud implements Runnable{
         	}
         } catch (IOException e) {
         	Util.log(TAG, "receiveMessageFromCloud:" + e.toString(), LogLevel.SYS);
-            reconnect();
+//            reconnect();
         }
         buf = null;
     }
@@ -266,7 +266,6 @@ public class RunnableCloud implements Runnable{
                     try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}	
                 }else{

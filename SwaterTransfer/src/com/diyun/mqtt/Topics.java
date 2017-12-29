@@ -9,7 +9,7 @@ public class Topics {
 	private static int mode = MODE_CUSTOMER_RELEASE;
 	
 	public static final String CLIENT_ID(){
-		return (mode == MODE_CUSTOMER_RELEASE) ? ("sm-swater-consumer-release-") : ( (mode == MODE_CUSTOMER_DEBUG) ? "sm-swater-consumer-debug-" : "sm-swater-consumer-inner-debug-");
+		return (mode == MODE_CUSTOMER_RELEASE) ? ("swater-transfer-jiangsu-release-") : ( (mode == MODE_CUSTOMER_DEBUG) ? "sm-swater-consumer-debug-" : "sm-swater-consumer-inner-debug-");
 	}
 	
 	public static String SWATER_TOPIC_PREFIX(){ 
